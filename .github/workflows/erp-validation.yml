@@ -2,6 +2,9 @@ name: ERP Windows validation
 on:
   push:
     branches: [main]
+    paths:
+      - 'source/**'
+      - '.github/**'
   pull_request:
   workflow_dispatch:
 permissions:
