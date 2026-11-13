@@ -1,5 +1,3 @@
-# MiaPaxERP kaynak kodu
+# MiaPaxERP 2.8.2 kaynak kodu
 
-517 dosyalı geliştirme kaynağı MiaPaxERP-source.zip arşivindedir. Arşivi bu klasöre çıkarın ve MiapaxERP.slnx çözümünü açın. .NET 10 SDK ve Windows gerekir.
-
-Güncel kapsam, test durumu ve sınırlamalar DEVELOPMENT_STATUS.md dosyasında açıklanır. Bu dal doğrulama içindir; otomatik güncelleme kurulum paketi değildir.
+519 dosya MiaPaxERP-source.zip içindedir. Arşivi bu klasöre çıkarıp MiapaxERP.slnx çözümünü Windows/.NET 10 SDK ile açın. SHA256SUMS.txt arşivi doğrular. Kapsam ve test sınırları DEVELOPMENT_STATUS.md dosyasındadır. Windows x64 kurulum paketi GitHub Releases üzerinden yayımlanır.

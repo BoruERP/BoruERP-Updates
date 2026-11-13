@@ -1,6 +1,6 @@
 # MiaPaxERP — geliştirme kaydı, 13 Kasım 2026
 
-Bu dal kaynak kodunun geliştirme kopyasıdır. Kuruluma hazır ve bütün ekranları doğrulanmış bir sürüm değildir. Mevcut otomatik güncelleme paketinin yerine geçmez.
+2.8.2 kaynak ve Windows x64 paket yayını. Ana dal yayını aynı SQL/TLS doğrulamasını tekrar çalıştırır ve başarılı olursa GitHub Releases paketini oluşturur. Otomatik güncellemenin imzalı manifesti değiştirilmez; paket elle kurulur. Uzak masaüstü kullanılmaz.
 
 ## Bu kopyadaki değişiklikler
 
@@ -15,17 +15,23 @@ Bu dal kaynak kodunun geliştirme kopyasıdır. Kuruluma hazır ve bütün ekran
 - Makine kapasitesi, reçete/hedef KG üzerinden malzeme ihtiyaç hesabı ve fiilî maliyet kayıtları.
 - Hızlı Bilişim, web sitesi, mağaza ve mobil hesap yönetimi için HTTPS sunucu adaptörleri. Sağlayıcı sonuçlarını istemcinin yazabildiği uçlar yayımlanmaz.
 
-## Doğrulama ve tamamlanmamış işler
+## Doğrulama ve kurulum sınırları
 
-- Yeni kurallar, veri serileştirmesi, işlem kataloğu ve arayüz oluşturma kontrolleri: son kaydedilen koşuda 16 test geçti.
-- Çözümün son derlemesi: 0 uyarı, 0 hata. Derlemenin geçmesi gerçek veritabanı akışlarının geçtiği anlamına gelmez.
-- Gerçek SQL ve TLS testleri kısıtlı Windows oturumunun Schannel kimlik bilgisi hatası nedeniyle doğrulanamadı. Bunlar başarılı sayılmadı.
-- Tam ana pencerenin HTTPS oturumuna geçişi etkinleştirildi. İlk şifre/kurtarma, Excel stok yazma ve yönetici sıfırlama sunucu akışları eklendi; gerçek SQL ortamındaki son doğrulama bekliyor.
-- 163 sabit okuma sorgusu ve bütün kayıtlı HTTPS servis yolları için köprü kontrolleri var. Son kaydedilen altyapı koşusunda 730 HTTPS kontrolü geçti; bu sayı TLS atlanan kontrollerini içermez.
-- Yeni SQL şeması, gerçek veritabanında işlem/geri alma/eşzamanlılık ve eski verilerle geçiş testinden geçmedi. Canlı veritabanına otomatik uygulanmadı.
-- MRP mevcut yüzdeli boru reçetesine dayanır; genel çok seviyeli BOM ve tüm kapasite takvimleri tamamlanmış değildir.
-- E-belge sağlayıcısında gerçek hesap, resmî gönderim ve şehir dışı bağlantı testleri yapılmadı. Entegrasyon kodunun bulunması resmî teslimin doğrulandığı anlamına gelmez.
-- Bu değişiklikler D: üzerindeki çalışan programa kurulmadı. Yeni kurulum/güncelleme paketi yayımlanmadı.
+- GitHub Windows koşusu 43377312600: 20/20 test geçti, atlanan test yok; tam çözüm 0 uyarı / 0 hata.
+- Gerçek TLS oturumu, güvenilmeyen sertifikanın ve yanlış alan adının reddi doğrulandı. Gerçek şifreli SQL bağlantısı geçti.
+- İzole veritabanında satış/stok/cari/tahsilat, kısmi döviz ödeme yuvarlaması, geri alma, depo/rezervasyon/sayım değerlemesi, sipariş–kabul–fatura, parti izi, kapasite, fiilî maliyet, dönem kilidi ve bağımsız basınç onayı doğrulandı.
+- 163 sabit okuma sorgusu ve kayıtlı HTTPS servis yolları denetlenir. Bu, bütün ekranların müşterinin verisiyle elle denenmiş olduğu iddiası değildir.
+- Son mobil yan cihaz koruması, basınç tekrar kaydı ve paketleme de yayın öncesi aynı CI'da tekrar doğrulanır.
+- İlk şifre/kurtarma, Excel ve yönetici sıfırlama sunucu akışları kodda mevcuttur; müşterinin gerçek hesap/verileriyle kabul denemesi gerekir.
+- MRP boru üretiminin yüzdeli reçete/hedef KG yapısına dayanır; genel çok seviyeli BOM planlayıcısı değildir.
+- Hızlı Bilişim hesabı/GİB gerçek gönderimi, mağaza sağlayıcıları ve müşterinin alan adı/modem bağlantısı bu testlerde kullanılmadı. Gerçek anahtarlar müşteri ana sunucusunda girilmelidir.
+- Yeni Android APK imzalanmadı. Mevcut imzalı APK HTTPS adresi ve kişisel eşleme koduyla kullanılır; yeni bağlantı kodu desteği kaynakta bulunur.
+- Canlı D: kurulumu ve müşteri veritabanı bu kaynak yayını tarafından değiştirilmedi.
+- Basınç testi reddedilen parti güvenlik gereği serbest bırakılamaz. Yeniden işleme/teknik uygunsuzluk süreci işletilmeden geçmiş ret yok sayılmaz.
+
+## Elle kurulum
+
+Önce SQL veritabanını ve mevcut kurulum klasörünü yedekleyin. Windows x64 paketini ayrı klasöre açın. Ana bilgisayarda Kolay-Kurulum.cmd ile HTTPS sunucusunu yapılandırın; alan adı ve modem 443 yönlendirmesi ana sunucuya ait olmalıdır. Yan bilgisayarda Masaustu/MiapaxERP.Desktop.exe içindeki bağlantı ekranında HTTPS ana sunucu adresini seçin. SQL portunu internete açmayın. Mevcut lisans ve kullanıcı yetkileri geçerlidir. Yeni modüllerin kurulum işlemi MODULES.INSTALL yetkisi ister. Ana sunucu ve yan cihazların sürümü aynı olmalıdır.
 
 ## Derleme ve test
 
