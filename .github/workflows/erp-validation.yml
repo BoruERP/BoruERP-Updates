@@ -2,6 +2,7 @@ name: ERP Windows validation
 on:
   push:
     branches: ['development/https-erp-20261113']
+  pull_request:
   workflow_dispatch:
 permissions:
   contents: read
@@ -16,10 +17,13 @@ jobs:
       - name: Get the exact development source
         shell: pwsh
         run: |
-          git clone --depth 1 --branch "$env:GITHUB_REF_NAME" "$env:GITHUB_SERVER_URL/$env:GITHUB_REPOSITORY.git" checkout
+          git init checkout
+          git -C checkout remote add origin "$env:GITHUB_SERVER_URL/$env:GITHUB_REPOSITORY.git"
+          git -C checkout fetch --depth 1 origin "$env:GITHUB_SHA"
           if ($LASTEXITCODE -ne 0) { throw 'Source checkout failed' }
+          git -C checkout checkout --detach FETCH_HEAD
           $actual = git -C checkout rev-parse HEAD
-          if ($actual -ne $env:GITHUB_SHA) { throw 'Branch changed after this validation was queued' }
+          if ($actual -ne $env:GITHUB_SHA) { throw 'Validation checkout mismatch' }
           Expand-Archive -LiteralPath checkout/source/MiaPaxERP-source.zip -DestinationPath checkout/source -Force
       - name: Start isolated SQL LocalDB
         shell: pwsh
@@ -37,3 +41,4 @@ jobs:
       - name: Verify all registered HTTPS service routes
         shell: pwsh
         run: dotnet run --project checkout/source/MiapaxERP.Tests.UzakCalisma/MiapaxERP.Tests.UzakCalisma.csproj --no-build
+
