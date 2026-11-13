@@ -1,0 +1,39 @@
+name: ERP Windows validation
+on:
+  push:
+    branches: ['development/https-erp-20261113']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows-sql-tls:
+    runs-on: windows-2025
+    timeout-minutes: 25
+    env:
+      MIAPAX_TEST_SQL: 'Server=(localdb)\MSSQLLocalDB;Database=master;Integrated Security=true;Encrypt=true;TrustServerCertificate=true;Pooling=false;Connect Timeout=10'
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+    steps:
+      - name: Get the exact development source
+        shell: pwsh
+        run: |
+          git clone --depth 1 --branch "$env:GITHUB_REF_NAME" "$env:GITHUB_SERVER_URL/$env:GITHUB_REPOSITORY.git" checkout
+          if ($LASTEXITCODE -ne 0) { throw 'Source checkout failed' }
+          $actual = git -C checkout rev-parse HEAD
+          if ($actual -ne $env:GITHUB_SHA) { throw 'Branch changed after this validation was queued' }
+          Expand-Archive -LiteralPath checkout/source/MiaPaxERP-source.zip -DestinationPath checkout/source -Force
+      - name: Start isolated SQL LocalDB
+        shell: pwsh
+        run: |
+          $localDb = Get-ChildItem 'C:\Program Files\Microsoft SQL Server' -Filter SqlLocalDB.exe -Recurse | Select-Object -First 1
+          if ($null -eq $localDb) { throw 'SQL LocalDB is unavailable on this runner' }
+          & $localDb.FullName start MSSQLLocalDB
+          if ($LASTEXITCODE -ne 0) { throw 'SQL LocalDB failed to start' }
+      - name: Build the complete solution
+        shell: pwsh
+        run: dotnet build checkout/source/MiapaxERP.slnx --disable-build-servers -m:1 -p:NuGetAudit=false
+      - name: Run rules, UI rendering, real TLS and isolated SQL transactions
+        shell: pwsh
+        run: dotnet test checkout/source/MiapaxERP.Tests.HTTPS.Integration/MiapaxERP.Tests.HTTPS.Integration.csproj --no-restore --disable-build-servers -m:1 -p:NuGetAudit=false --logger 'console;verbosity=normal'
+      - name: Verify all registered HTTPS service routes
+        shell: pwsh
+        run: dotnet run --project checkout/source/MiapaxERP.Tests.UzakCalisma/MiapaxERP.Tests.UzakCalisma.csproj --no-build
