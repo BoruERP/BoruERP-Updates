@@ -1,0 +1,54 @@
+name: ERP Windows validation
+on:
+  push:
+    branches: [main, development/https-erp-20261113]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  windows-sql-tls:
+    runs-on: windows-2025
+    timeout-minutes: 25
+    env:
+      MIAPAX_TEST_SQL: 'Server=(localdb)\MSSQLLocalDB;Database=master;Integrated Security=true;Encrypt=true;TrustServerCertificate=true;Pooling=false;Connect Timeout=10'
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+    steps:
+      - name: Get the exact development source
+        shell: pwsh
+        run: |
+          git init checkout
+          git -C checkout remote add origin "$env:GITHUB_SERVER_URL/$env:GITHUB_REPOSITORY.git"
+          git -C checkout fetch --depth 1 origin "$env:GITHUB_SHA"
+          if ($LASTEXITCODE -ne 0) { throw 'Source checkout failed' }
+          git -C checkout checkout --detach FETCH_HEAD
+          $actual = git -C checkout rev-parse HEAD
+          if ($actual -ne $env:GITHUB_SHA) { throw 'Validation checkout mismatch' }
+          Expand-Archive -LiteralPath checkout/source/MiaPaxERP-source.zip -DestinationPath checkout/source -Force
+      - name: Start isolated SQL LocalDB
+        shell: pwsh
+        run: |
+          $localDb = Get-ChildItem 'C:\Program Files\Microsoft SQL Server' -Filter SqlLocalDB.exe -Recurse | Select-Object -First 1
+          if ($null -eq $localDb) { throw 'SQL LocalDB is unavailable on this runner' }
+          & $localDb.FullName start MSSQLLocalDB
+          if ($LASTEXITCODE -ne 0) { throw 'SQL LocalDB failed to start' }
+      - name: Build the complete solution
+        shell: pwsh
+        run: dotnet build checkout/source/MiapaxERP.slnx --disable-build-servers -m:1 -p:NuGetAudit=false
+      - name: Run rules, UI rendering, real TLS and isolated SQL transactions
+        shell: pwsh
+        run: dotnet test checkout/source/MiapaxERP.Tests.HTTPS.Integration/MiapaxERP.Tests.HTTPS.Integration.csproj --no-restore --disable-build-servers -m:1 -p:NuGetAudit=false --logger 'console;verbosity=normal'
+      - name: Verify all registered HTTPS service routes
+        shell: pwsh
+        run: dotnet run --project checkout/source/MiapaxERP.Tests.UzakCalisma/MiapaxERP.Tests.UzakCalisma.csproj --no-build
+
+
+
+      - name: Verify e-document provider adapter and Windows credential protection
+        shell: pwsh
+        run: dotnet run --project checkout/source/MiapaxERP.Tests.EBelge/MiapaxERP.Tests.EBelge.csproj --no-build
+      - name: Build packages and publish validated main release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./checkout/.github/publish-release.ps1
