@@ -1,7 +1,7 @@
 name: ERP Windows validation
 on:
   push:
-    branches: [main, development/https-erp-20261113]
+    branches: [main]
   pull_request:
   workflow_dispatch:
 permissions:
@@ -25,6 +25,7 @@ jobs:
           $actual = git -C checkout rev-parse HEAD
           if ($actual -ne $env:GITHUB_SHA) { throw 'Validation checkout mismatch' }
           Expand-Archive -LiteralPath checkout/source/MiaPaxERP-source.zip -DestinationPath checkout/source -Force
+          Expand-Archive -LiteralPath checkout/source/MiaPaxERP-patch.zip -DestinationPath checkout/source -Force
       - name: Start isolated SQL LocalDB
         shell: pwsh
         run: |
@@ -44,9 +45,12 @@ jobs:
 
 
 
-      - name: Verify e-document provider adapter and Windows credential protection
+      - name: Verify e-document provider and credential protection
         shell: pwsh
         run: dotnet run --project checkout/source/MiapaxERP.Tests.EBelge/MiapaxERP.Tests.EBelge.csproj --no-build
+      - name: Verify updater installation and rollback
+        shell: pwsh
+        run: dotnet run --project checkout/source/MiapaxERP.Tests.Guncelleme/MiapaxERP.Tests.Guncelleme.csproj --no-build -- checkout/source
       - name: Build packages and publish validated main release
         shell: pwsh
         env:
