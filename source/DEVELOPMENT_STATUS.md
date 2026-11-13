@@ -45,3 +45,6 @@ Boyutu büyük tanıtım videoları, GeoJSON harita verileri ve places.json veri
 Yeni sekiz modül ana ekran içinde açılır; mevcut menü stilini ve seçili temayı kullanır. Depo raf ağacı, muhasebe dönem/mizanı, satın alma satır eşleştirmesi, basınç ölçümleri, sevkiyat rotası, dövizli tahsilat özeti, makine planları ve MRP/maliyet ayrı çalışma alanlarıdır.
 Girişteki MiaPaxERP logosu korunur. Stok–üretim–sevkiyat–finans akışını gösteren sessiz çizim animasyonu eklenir; pencere gizlendiğinde durur ve Windows hareket azaltma ayarına uyar.
 Bilinen eski BoruERP güncelleme adresi mevcut MiaPaxERP kanalına taşınır; özel sunucu adresleri korunur. Yeni sürüm dosya sürümü 2.8.3.0'dır. Güncelleme paketi mevcut RSA-PSS anahtarıyla doğrulanır; anahtar değiştirilmez.
+
+## 2.8.4 müşteri destek bilgileri
+Cihaz sayısı, ana/yan PC Windows, işlemci, RAM ve sabit disk bilgileri ile sınıflandırılmış hata kayıtları lisans sunucusuna bildirilir. Parola, lisans anahtarı, SQL metni ve müşteri belge içeriği hata kayıtlarına eklenmez. Eski istemcilerden henüz bilgi gelmeyen alanlar boş gösterilir. Yan PC bildirimleri yetkili HTTPS oturumuyla ana sunucu üzerinden iletilir. İlgili lisans sunucusu da destek güncellemesini almalıdır.
