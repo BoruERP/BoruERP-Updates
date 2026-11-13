@@ -1,6 +1,6 @@
 # MiaPaxERP — geliştirme kaydı, 13 Kasım 2026
 
-2.8.2 kaynak ve Windows x64 paket yayını. Ana dal yayını aynı SQL/TLS doğrulamasını tekrar çalıştırır ve başarılı olursa GitHub Releases paketini oluşturur. Otomatik güncellemenin imzalı manifesti değiştirilmez; paket elle kurulur. Uzak masaüstü kullanılmaz.
+2.8.3 kaynak ve Windows x64 paket yayını. Ana dal yayını aynı SQL/TLS doğrulamasını tekrar çalıştırır ve başarılı olursa GitHub Releases paketini oluşturur. Otomatik güncelleme için masaüstü dosyaları ZIP kökünde paketlenir. Ana/Yan bildirimleri paket yüklemesinden sonra mevcut yayıncı anahtarıyla imzalanır. Uzak masaüstü kullanılmaz.
 
 ## Bu kopyadaki değişiklikler
 
@@ -39,3 +39,9 @@ Windows ve .NET 10 SDK ile `MiapaxERP.slnx` çözümünü açın. Yeni test proj
 
 Sunucu anahtarları, şifreli hesap dosyaları, veritabanı dosyaları ve derleme çıktıları kaynak yayınına dahil edilmez.
 Boyutu büyük tanıtım videoları, GeoJSON harita verileri ve places.json veri dosyaları bu hızlı kaynak yayınına eklenmedi; mevcut kurulumdaki bu varlıklar kaynak yayınından bağımsızdır.
+
+## 2.8.3 arayüz ve güncelleme düzeltmeleri
+
+Yeni sekiz modül ana ekran içinde açılır; mevcut menü stilini ve seçili temayı kullanır. Depo raf ağacı, muhasebe dönem/mizanı, satın alma satır eşleştirmesi, basınç ölçümleri, sevkiyat rotası, dövizli tahsilat özeti, makine planları ve MRP/maliyet ayrı çalışma alanlarıdır.
+Girişteki MiaPaxERP logosu korunur. Stok–üretim–sevkiyat–finans akışını gösteren sessiz çizim animasyonu eklenir; pencere gizlendiğinde durur ve Windows hareket azaltma ayarına uyar.
+Bilinen eski BoruERP güncelleme adresi mevcut MiaPaxERP kanalına taşınır; özel sunucu adresleri korunur. Yeni sürüm dosya sürümü 2.8.3.0'dır. Güncelleme paketi mevcut RSA-PSS anahtarıyla doğrulanır; anahtar değiştirilmez.
