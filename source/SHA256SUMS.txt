@@ -1,2 +1,2 @@
 7cd56a41d236f541c27bd2d58693bf42a8405161544dd5b603c12ea45baa2ed0  MiaPaxERP-source.zip
-02fbdeeaeeedc0b91939c84f949c62c9838ca7bf0d1a1ab15c5b39aa77927e8d  MiaPaxERP-patch.zip
+00d1fc51011bc132aa479273011a3ea670684a60d30ef9d82355c4072ec37c4a  MiaPaxERP-patch.zip
